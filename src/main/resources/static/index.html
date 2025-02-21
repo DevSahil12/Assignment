@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spring Boot API Frontend</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea, select, button { margin-top: 10px; display: block; width: 100%; padding: 8px; }
+    pre { background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+<h1>Spring Boot API Frontend</h1>
+
+<label for="jsonInput">Enter JSON Data:</label>
+<textarea id="jsonInput" rows="4" placeholder='{"data": ["A", "1", "B"]}'></textarea>
+
+<button onclick="submitData()">Submit</button>
+
+<label for="filter">Filter Response:</label>
+<select id="filter" multiple>
+  <option value="numbers">Numbers</option>
+  <option value="alphabets">Alphabets</option>
+  <option value="highest_alphabet">Highest Alphabet</option>
+</select>
+
+<h3>Filtered Response:</h3>
+<pre id="responseOutput">No data yet.</pre>
+
+<script>
+  function submitData() {
+    const inputData = document.getElementById("jsonInput").value;
+    try {
+      const parsedData = JSON.parse(inputData);
+      fetch("http://localhost:8081/bfhl", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsedData)
+      })
+              .then(response => response.json())
+              .then(data => displayResponse(data))
+              .catch(error => alert("API Error: " + error));
+    } catch (error) {
+      alert("Invalid JSON Format");
+    }
+  }
+
+  function displayResponse(data) {
+    const selectedFilters = Array.from(document.getElementById("filter").selectedOptions).map(opt => opt.value);
+    const filteredData = Object.fromEntries(Object.entries(data).filter(([key]) => selectedFilters.includes(key)));
+    document.getElementById("responseOutput").textContent = JSON.stringify(filteredData, null, 2);
+  }
+</script>
+</body>
+</html>

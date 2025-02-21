@@ -2,7 +2,7 @@ package com.example.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin(origins = "http://localhost")
 @RestController
 @RequestMapping("/bfhl")
 public class Controller {
